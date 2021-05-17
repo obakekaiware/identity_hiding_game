@@ -9,7 +9,7 @@ def create_massages(word, num_players):
     messages = []
     for _ in range(num_players - 1):
         messages.append('あなたは村人です。')
-    messages.append(f'あなたはインサイダーです。\nお題は「{word}」です。')
+    messages.append(f'あなたはハイダーです。\nお題は「{word}」です。')
     random.shuffle(messages)
     return messages
 
