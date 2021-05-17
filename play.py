@@ -1,4 +1,5 @@
 import os
+import datetime
 import random
 import PySimpleGUI as sg
 
@@ -12,35 +13,68 @@ def create_massages(word, num_players):
     return messages
 
 
-def main():
-    sg.theme('DarkAmber')   # Add a touch of color
-    # All the stuff inside your window.
+def input_theme_and_num_players():
     layout = [
         [sg.Text('お題を入力してください')],
         [sg.InputText()],
-        [sg.Text('マスター以外の人数を入力してください（半角数字）')]
+        [sg.Text('マスター以外の人数を入力してください（半角数字）')],
         [sg.InputText()],
         [sg.Button('OK')]
     ]
-
     # Create the Window
-    window = sg.Window('Window Title', layout)
+    window = sg.Window('', layout)
     # Event Loop to process "events" and get the "values" of the inputs
     while True:
         event, values = window.read()
         word = values[0]
         num_players = int(values[1])
-        print(values)
         if event == sg.WIN_CLOSED or event == 'OK':
             # if user closes window or clicks cancel
             break
     window.close()
 
-    messages = create_massages(word, num_players)
+    return word, num_players
 
-    os.makedirs('これを配布', exist_ok=True)
-    for player_id, message in enumerate(messages):
-        with open(f'これを配布/{player_id}.txt', 'w') as file:
+
+def input_player_names(num_players):
+    layout = [
+        [sg.Text('マスター以外の名前を入力してください。')],
+    ]
+    for _ in range(num_players):
+        layout.append([sg.InputText()])
+    layout.append([sg.Button('OK')])
+
+    # Create the Window
+    window = sg.Window('', layout)
+    # Event Loop to process "events" and get the "values" of the inputs
+    while True:
+        event, values = window.read()
+        names = list(values.values())
+        if event == sg.WIN_CLOSED or event == 'OK':
+            # if user closes window or clicks cancel
+            break
+    window.close()
+
+    return names
+
+
+def main():
+    sg.theme('DarkAmber')   # Add a touch of color
+
+    word, num_players = input_theme_and_num_players()
+    messages = create_massages(word, num_players)
+    names = input_player_names(num_players)
+
+    now = datetime.datetime.today()
+    now = (
+        f'{now.year}{now.month:02}{now.day:02}'
+        f'_{now.hour:02}{now.minute:02}'
+    )
+    output_dir = f'results/{now}'
+    os.makedirs(output_dir, exist_ok=True)
+    for name, message in zip(names, messages):
+        output_path = os.path.join(output_dir, f'{name}.txt')
+        with open(output_path, 'w') as file:
             file.write(message)
 
 
