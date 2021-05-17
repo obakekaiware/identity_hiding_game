@@ -1,4 +1,5 @@
 import os
+import sys
 import datetime
 import random
 import PySimpleGUI as sg
@@ -26,11 +27,12 @@ def input_theme_and_num_players():
     # Event Loop to process "events" and get the "values" of the inputs
     while True:
         event, values = window.read()
-        word = values[0]
-        num_players = int(values[1])
-        if event == sg.WIN_CLOSED or event == 'OK':
-            # if user closes window or clicks cancel
+        if event == 'OK':
+            word = values[0]
+            num_players = int(values[1])
             break
+        if event == sg.WIN_CLOSED:
+            sys.exit()
     window.close()
 
     return word, num_players
@@ -49,10 +51,11 @@ def input_player_names(num_players):
     # Event Loop to process "events" and get the "values" of the inputs
     while True:
         event, values = window.read()
-        names = list(values.values())
-        if event == sg.WIN_CLOSED or event == 'OK':
-            # if user closes window or clicks cancel
+        if event == 'OK':
+            names = list(values.values())
             break
+        if event == sg.WIN_CLOSED:
+            sys.exit()
     window.close()
 
     return names
